@@ -182,7 +182,7 @@ def vis_world_range(
     if tN is None:
         tN = viable_ts[-1]
     assert 0 <= t0 < tN
-    target_ts = np.linspace(t0, tN, N).astype(np.int)
+    target_ts = np.linspace(t0, tN, N).astype(int)
 
     ts = set()
     for tt in target_ts:

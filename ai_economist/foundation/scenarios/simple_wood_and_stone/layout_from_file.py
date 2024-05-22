@@ -209,8 +209,8 @@ class LayoutFromFile(BaseEnvironment):
             # Based on skill, assign each agent to one of the location groups
             skill_groups = np.floor(
                 np.arange(self.n_agents) * (4 / self.n_agents),
-            ).astype(np.int)
-            n_in_group = np.zeros(4, dtype=np.int)
+            ).astype(int)
+            n_in_group = np.zeros(4, dtype=int)
             for g in skill_groups:
                 # The position within the group is given by the number of agents
                 # counted in the group thus far.
