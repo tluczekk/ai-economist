@@ -89,7 +89,7 @@ class TestEnv(unittest.TestCase):
         # Assert that the planner's index in the world is 'p'
         self.assertEqual(env.world.planner.idx, "p")
 
-        obs = env.reset()
+        obs= env.reset()
 
         # Test whether the observation dictionary keys are created as expected
         self.assertEqual(

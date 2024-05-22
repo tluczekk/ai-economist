@@ -849,7 +849,7 @@ class BaseEnvironment(ABC):
             del info[str(agent_idx)]
         return info
 
-    def reset(self, seed_state=None, force_dense_logging=False):
+    def reset(self, seed_state=None, force_dense_logging=False, seed=None, info=None):
         """
         Reset the state of the environment to initialize a new episode.
 
@@ -924,9 +924,9 @@ class BaseEnvironment(ABC):
         if self.collate_agent_step_and_reset_data:
             obs = self.collate_agent_obs(obs)
 
-        return obs
+        return obs, {}
 
-    def step(self, actions=None, seed_state=None):
+    def step(self, actions=None, seed_state=None, seed=None, info=None):
         """
         Execute the components, perform the scenario step, collect observations and
         return observations, rewards, dones, and infos.
@@ -1010,6 +1010,9 @@ class BaseEnvironment(ABC):
         )
         rew = self._generate_rewards()
         done = {"__all__": self.world.timestep >= self._episode_length}
+        # gymnasium compliance
+        # no truncation in this environment
+        trunc = {"__all__": False}
         info = {k: {} for k in obs.keys()}
 
         if self._dense_log_this_episode:
@@ -1029,7 +1032,7 @@ class BaseEnvironment(ABC):
             rew = self.collate_agent_rew(rew)
             info = self.collate_agent_info(info)
 
-        return obs, rew, done, info
+        return obs, rew, done, trunc, info
 
     # The following methods must be implemented for each scenario
     # -----------------------------------------------------------

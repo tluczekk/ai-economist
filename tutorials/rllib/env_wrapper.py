@@ -16,8 +16,8 @@ import warnings
 
 import numpy as np
 from ai_economist import foundation
-from gym import spaces
-from gym.utils import seeding
+from gymnasium import spaces
+from gymnasium.utils import seeding
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
 
 _BIG_NUMBER = 1e20
@@ -202,10 +202,10 @@ class RLlibEnvWrapper(MultiAgentEnv):
 
     def reset(self, *args, **kwargs):
         obs = self.env.reset(*args, **kwargs)
-        return recursive_list_to_np_array(obs)
+        return recursive_list_to_np_array(obs), {}
 
     def step(self, action_dict):
-        obs, rew, done, info = self.env.step(action_dict)
+        obs, rew, done, trunc, info = self.env.step(action_dict)
         assert isinstance(obs[self.sample_agent_idx]["action_mask"], np.ndarray)
 
-        return recursive_list_to_np_array(obs), rew, done, info
+        return recursive_list_to_np_array(obs), rew, done, trunc, info

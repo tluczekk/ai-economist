@@ -15,7 +15,7 @@ from utils import remote, saving
 import tf_models
 import yaml
 from env_wrapper import RLlibEnvWrapper
-from ray.rllib.agents.ppo import PPOTrainer
+from ray.rllib.algorithms import PPO
 from ray.tune.logger import NoopLogger, pretty_print
 
 ray.init(log_to_driver=False)
@@ -115,7 +115,7 @@ def build_trainer(run_configuration):
     def logger_creator(config):
         return NoopLogger({}, "/tmp")
 
-    ppo_trainer = PPOTrainer(
+    ppo_trainer = PPO(
         env=RLlibEnvWrapper, config=trainer_config, logger_creator=logger_creator
     )
 

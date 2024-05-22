@@ -33,7 +33,8 @@ except ValueError:
     print("No GPUs found! Running the simulation on a CPU.")
 
 import numpy as np
-from gym.spaces import Box, Dict, Discrete, MultiDiscrete
+# Farama's gymnasium compliant
+from gymnasium.spaces import Box, Dict, Discrete, MultiDiscrete
 
 BIG_NUMBER = 1e20
 
@@ -276,11 +277,12 @@ class FoundationEnvWrapper:
             else:
                 calls device hard reset managed by the CUDAResetter
         """
+        # Modified to make it gymnasium compliant
         self.env.world.timestep = 0
 
         if self.reset_on_host:
             # Produce observation
-            obs = self.obs_at_reset()
+            obs, info = self.obs_at_reset()
         else:
             assert self.use_cuda
 
@@ -329,14 +331,14 @@ class FoundationEnvWrapper:
                 self.reset_on_host = False
 
                 # Return the obs
-                return obs
+                return obs, info
             # Returns an empty dictionary for all subsequent resets on the GPU
             # as arrays are modified in place
             self.env_resetter.reset_when_done(
                 self.cuda_data_manager, mode="force_reset"
             )
             return {}
-        return obs  # CPU version
+        return obs, info  # CPU version
 
     def reset_only_done_envs(self):
         """
@@ -370,19 +372,19 @@ class FoundationEnvWrapper:
             result = None  # Do not return anything
         else:
             assert actions is not None, "Please provide actions to step with."
-            obs, rew, done, info = self.env.step(actions)
+            obs, rew, done, trunc, info = self.env.step(actions)
             obs = self._reformat_obs(obs)
             rew = self._reformat_rew(rew)
-            result = obs, rew, done, info
+            result = obs, rew, done, trunc, info
         return result
 
     def obs_at_reset(self):
         """
         Calls the (Python) env to reset and return the initial state
         """
-        obs = self.env.reset()
+        obs, info = self.env.reset()
         obs = self._reformat_obs(obs)
-        return obs
+        return obs, info
 
     def _reformat_obs(self, obs):
         if "a" in obs:
