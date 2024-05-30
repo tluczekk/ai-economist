@@ -9,8 +9,8 @@ import os
 import numpy as np
 from gym.spaces import Box, Dict
 from ray.rllib.models import ModelCatalog
-from ray.rllib.models.tf.recurrent_tf_modelv2 import (
-    RecurrentTFModelV2,
+from ray.rllib.models.tf.recurrent_net import (
+    RecurrentNetwork,
     add_time_dimension,
 )
 from ray.rllib.models.tf.tf_modelv2 import TFModelV2
@@ -54,7 +54,7 @@ def apply_logit_mask(logits, mask):
     return logits + logit_mask
 
 
-class KerasConvLSTM(RecurrentTFModelV2):
+class KerasConvLSTM(RecurrentNetwork):
     """
     The model used in the paper "The AI Economist: Optimal Economic Policy
     Design via Two-level Deep Reinforcement Learning"

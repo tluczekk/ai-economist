@@ -926,7 +926,7 @@ class BaseEnvironment(ABC):
 
         return obs, {}
 
-    def step(self, actions=None, seed_state=None, seed=None, info=None):
+    def step(self, actions=None, seed_state=None, seed=None, options=None):
         """
         Execute the components, perform the scenario step, collect observations and
         return observations, rewards, dones, and infos.

@@ -113,7 +113,7 @@ trainer:
   num_gpus: 0
   num_gpus_per_worker: 0
   num_sgd_iter: 1
-  num_workers: 15
+  num_workers: 4
   observation_filter: NoFilter
   rollout_fragment_length: 200
   seed: null
@@ -122,7 +122,7 @@ trainer:
   tf_session_args:
     allow_soft_placement: true
     device_count:
-      CPU: 15
+      CPU: 4
       GPU: 0
     gpu_options:
       allow_growth: true

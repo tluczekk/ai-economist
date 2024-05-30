@@ -89,7 +89,7 @@ class TestEnv(unittest.TestCase):
         # Assert that the planner's index in the world is 'p'
         self.assertEqual(env.world.planner.idx, "p")
 
-        obs= env.reset()
+        obs, info= env.reset()
 
         # Test whether the observation dictionary keys are created as expected
         self.assertEqual(
@@ -97,7 +97,7 @@ class TestEnv(unittest.TestCase):
             [str(i) for i in range(create_env.env_config["n_agents"])] + ["p"],
         )
 
-        obs, reward, done, info = env.step({})
+        obs, reward, done, trunc, info = env.step({})
 
         # Check that the observation, reward and info keys match
         self.assertEqual(obs.keys(), reward.keys())

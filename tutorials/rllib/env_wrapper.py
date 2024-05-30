@@ -15,7 +15,9 @@ import random
 import warnings
 
 import numpy as np
+
 from ai_economist import foundation
+
 from gymnasium import spaces
 from gymnasium.utils import seeding
 from ray.rllib.env.multi_agent_env import MultiAgentEnv
@@ -69,7 +71,7 @@ class RLlibEnvWrapper(MultiAgentEnv):
         self.verbose = verbose
         self.sample_agent_idx = str(self.env.all_agents[0].idx)
 
-        obs = self.env.reset()
+        obs, info = self.env.reset()
 
         self.observation_space = self._dict_to_spaces_dict(obs["0"])
         self.observation_space_pl = self._dict_to_spaces_dict(obs["p"])
@@ -200,11 +202,11 @@ class RLlibEnvWrapper(MultiAgentEnv):
         random.seed(seed2)
         self._seed = seed2
 
-    def reset(self, *args, **kwargs):
-        obs = self.env.reset(*args, **kwargs)
+    def reset(self, seed=None, options=None, *args, **kwargs):
+        obs, info = self.env.reset(*args, **kwargs)
         return recursive_list_to_np_array(obs), {}
 
-    def step(self, action_dict):
+    def step(self, action_dict, seed=None, options=None):
         obs, rew, done, trunc, info = self.env.step(action_dict)
         assert isinstance(obs[self.sample_agent_idx]["action_mask"], np.ndarray)
 
