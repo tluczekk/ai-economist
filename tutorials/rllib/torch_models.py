@@ -1,7 +1,7 @@
 import os 
 
 import numpy as np
-from gym.spaces import Box, Dict
+from gymnasium.spaces import Box, Dict
 from ray.rllib.models import ModelCatalog
 from ray.rllib.models.torch.recurrent_net import RecurrentNetwork
 from ray.rllib.policy.rnn_sequencing import add_time_dimension
@@ -134,6 +134,8 @@ class TorchConvLSTM(RecurrentNetwork):
             None,
         )
 
+        self.embed = nn.Embedding(input_emb_vocab, emb_dim)
+
         self.conv = nn.Sequential(
             nn.Conv2d(in_channels=conv_shape[2],
                       out_channels=16,
@@ -154,11 +156,13 @@ class TorchConvLSTM(RecurrentNetwork):
 
         self.conv.append(nn.Flatten())
 
-        assert get_conv_output_size(conv_shape[2], 3, 2, num_conv, out_channels=32) > 0
+        conv_output = get_conv_output_size(conv_shape[2], 3, 2, num_conv, out_channels=32)
+        assert conv_output > 0
+
+        non_conv_input_size = np.sum([input_dict[k].flatten().shape[0] for k in non_conv_input_keys])
 
         self.fc = nn.Sequential(
-            nn.Linear(get_conv_output_size(conv_shape[2], 3, 2, num_conv, out_channels=32),
-                      fc_dim),
+            nn.Linear(conv_output + non_conv_input_size, fc_dim),
             nn.ReLU(),
         )
 
@@ -166,4 +170,15 @@ class TorchConvLSTM(RecurrentNetwork):
             self.fc.append(nn.Linear(fc_dim, fc_dim))
             self.fc.append(nn.ReLU())
 
-        
+        self.layer_norm = nn.LayerNorm(fc_dim)
+
+        self.lstm = nn.LSTM(fc_dim, cell_size)
+
+        self.lstm_fc = nn.Linear(cell_size, num_outputs)
+
+    def forward(self, input_dict, state, seq_lens):
+        pass
+
+    def forward_rnn(self, inputs, state, seq_lens):
+        pass
+

@@ -7,7 +7,7 @@
 import os
 
 import numpy as np
-from gym.spaces import Box, Dict
+from gymnasium.spaces import Box, Dict
 from ray.rllib.models import ModelCatalog
 from ray.rllib.models.tf.recurrent_net import (
     RecurrentNetwork,
