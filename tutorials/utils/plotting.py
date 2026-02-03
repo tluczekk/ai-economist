@@ -207,7 +207,7 @@ def vis_builds(dense_logs, eps=None, ax=None):
             label="Ep {}".format(ep),
         )
     ax.legend()
-    ax.grid(b=True)
+    ax.grid(visible=True)
     ax.set_ylim(bottom=0)
 
 
@@ -370,7 +370,7 @@ def breakdown(log, remap_key=None):
             )
         ax.set_title(r)
         ax.legend()
-        ax.grid(b=True)
+        ax.grid(visible=True)
 
     ax = axes[-1]
     for i in range(n):
@@ -381,7 +381,7 @@ def breakdown(log, remap_key=None):
         )
     ax.set_title("Labor")
     ax.legend()
-    ax.grid(b=True)
+    ax.grid(visible=True)
 
     tmp = np.array(log["world"][0]["Stone"])
     fig2, axes = plt.subplots(
@@ -435,7 +435,7 @@ def breakdown(log, remap_key=None):
             ax.plot([-20, len(log["states"]) + 19], [0, 0], "w-")
             # ax.set_ylim([-10.2, 10.2]);
             ax.set_xlim([-20, len(log["states"]) + 19])
-            ax.grid(b=True)
+            ax.grid(visible=True)
             ax.set_facecolor([0.3, 0.3, 0.3])
 
     return (fig0, fig1, fig2), incomes, endows, c_trades, all_builds
@@ -448,4 +448,4 @@ def plot_for_each_n(y_fun, n, ax=None):
     for i in range(n):
         ax.plot(y_fun(i), color=cmap(i), label=i)
     ax.legend()
-    ax.grid(b=True)
+    ax.grid(visible=True)
