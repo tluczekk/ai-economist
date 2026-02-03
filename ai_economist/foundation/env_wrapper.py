@@ -36,7 +36,7 @@ import numpy as np
 # Farama's gymnasium compliant
 from gymnasium.spaces import Box, Dict, Discrete, MultiDiscrete
 
-BIG_NUMBER = 1e20
+BIG_NUMBER = 3275
 
 
 def recursive_obs_dict_to_spaces_dict(obs):

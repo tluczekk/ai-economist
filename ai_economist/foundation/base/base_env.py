@@ -9,6 +9,7 @@ from abc import ABC, abstractmethod
 from copy import deepcopy
 
 import numpy as np
+import tree
 
 from ai_economist.foundation.agents import agent_registry
 from ai_economist.foundation.base.registrar import Registry
@@ -190,6 +191,9 @@ class BaseEnvironment(ABC):
         world_dense_log_frequency=50,
         collate_agent_step_and_reset_data=False,
         seed=None,
+        agents_observe_contract=None,
+        contractify=None,
+        env_class=None
     ):
 
         # Make sure a name was declared by child class
@@ -220,7 +224,7 @@ class BaseEnvironment(ABC):
 
         # Number of agents must be an integer and there must be at least 2 agents
         assert isinstance(n_agents, int)
-        assert n_agents >= 2
+        assert n_agents >= 1
         self.n_agents = n_agents
 
         # Foundation assumes there's only a single planner
@@ -228,6 +232,7 @@ class BaseEnvironment(ABC):
         self.num_agents = (
             n_agents + n_planners
         )  # used in the warp_drive env wrapper (+ 1 for the planner)
+        self.possible_agents = [str(i) for i in range(self.n_agents)]
 
         # Components must be a tuple/list where each element is either a...
         #   tuple: ('Component Name', {Component kwargs})
@@ -924,6 +929,11 @@ class BaseEnvironment(ABC):
         if self.collate_agent_step_and_reset_data:
             obs = self.collate_agent_obs(obs)
 
+        obs = tree.map_structure(
+            lambda x: np.array([x], dtype=np.float32) if np.isscalar(x) else np.array(x, dtype=np.float32),
+            obs
+        )
+
         return obs, {}
 
     def step(self, actions=None, seed_state=None, seed=None, options=None):
@@ -1019,6 +1029,9 @@ class BaseEnvironment(ABC):
             self._dense_log["rewards"].append(rew)
 
         for agent in self.all_agents:
+            done[str(agent.idx)] = done["__all__"]
+            trunc[str(agent.idx)] = trunc["__all__"]
+
             agent.reset_actions()
 
         if done[
@@ -1031,6 +1044,13 @@ class BaseEnvironment(ABC):
             obs = self.collate_agent_obs(obs)
             rew = self.collate_agent_rew(rew)
             info = self.collate_agent_info(info)
+
+
+        obs = tree.map_structure(
+            lambda x: np.array([x], dtype=np.float32) if np.isscalar(x) else np.array(x, dtype=np.float32),
+            obs
+        )
+
 
         return obs, rew, done, trunc, info
 

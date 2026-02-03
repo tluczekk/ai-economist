@@ -6,10 +6,13 @@
 
 from copy import deepcopy
 
+import gymnasium
 import numpy as np
+from gymnasium.spaces import Discrete
 from scipy import signal
 
 from ai_economist.foundation.base.base_env import BaseEnvironment, scenario_registry
+from ai_economist.foundation.env_wrapper import recursive_obs_dict_to_spaces_dict
 from ai_economist.foundation.scenarios.utils import rewards, social_metrics
 
 
@@ -214,6 +217,22 @@ class Uniform(BaseEnvironment):
         self.init_optimization_metric = {agent.idx: 0 for agent in self.all_agents}
         self.prev_optimization_metric = {agent.idx: 0 for agent in self.all_agents}
         self.curr_optimization_metric = {agent.idx: 0 for agent in self.all_agents}
+
+    def observation_space(self) -> dict[str, gymnasium.spaces.Space]:
+        obs, info = self.reset()
+        return recursive_obs_dict_to_spaces_dict(obs)
+
+    def action_space(self) -> dict[str, gymnasium.spaces.Space]:
+            spaces = {
+            }
+            for agent_id in range(len(self.world.agents)):
+
+                spaces[str(agent_id)] = Discrete(
+                    self.get_agent(str(agent_id)).action_spaces
+                )
+                spaces[str(agent_id)].dtype = np.int32
+            return spaces
+
 
     @property
     def energy_weight(self):
@@ -616,6 +635,7 @@ class Uniform(BaseEnvironment):
         # Count the number of timesteps where the avg agent reward was > 0
         if avg_agent_rew > 0:
             self._auto_warmup_integrator += 1
+
 
         return rew
 
