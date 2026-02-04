@@ -496,7 +496,7 @@ class Uniform(BaseEnvironment):
             for agent in self.world.agents:
                 idx = str(agent.idx)
                 if idx in k:
-                    k = k.replace(f"/{idx}", "")
+                    k = k.replace(f"/{idx}", "").lower()
                     info[idx][k] = v
                     continue
 
