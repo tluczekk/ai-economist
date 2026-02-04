@@ -3,7 +3,7 @@
 # SPDX-License-Identifier: BSD-3-Clause
 # For full license text, see the LICENSE file in the repo root
 # or https://opensource.org/licenses/BSD-3-Clause
-
+import time
 from copy import deepcopy
 
 import gymnasium
@@ -488,6 +488,19 @@ class Uniform(BaseEnvironment):
                     resource_map + respawn, self.layout_specs[resource]["max_health"]
                 ),
             )
+
+    def step(self, actions=None, seed_state=None, seed=None, options=None):
+        obs, rew, done, trunc, info = super().step(actions=actions, seed_state=seed_state, seed=seed, options=options)
+        m = self.metrics
+        for k, v in m.items():
+            for agent in self.world.agents:
+                idx = str(agent.idx)
+                if idx in k:
+                    k = k.replace(f"/{idx}", "")
+                    info[idx][k] = v
+                    continue
+
+        return obs, rew, done, trunc, info
 
     def generate_observations(self):
         """

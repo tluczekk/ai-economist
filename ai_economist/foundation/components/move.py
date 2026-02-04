@@ -200,7 +200,7 @@ class Gather(BaseComponent):
             if self.skill_dist == "none":
                 bonus_rate = 0.0
             elif self.skill_dist == "fixed":
-                bonus_rate = 1.0 + i
+                bonus_rate = i / len(self.world.agents)
             elif self.skill_dist == "pareto":
                 bonus_rate = np.minimum(2, np.random.pareto(3)) / 2
             elif self.skill_dist == "lognormal":
